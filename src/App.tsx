@@ -12,6 +12,10 @@ import Register from "./pages/auth/Register";
 
 // Doctor A Pages
 import DoctorAHome from "./pages/doctor-a/DoctorAHome";
+import Departments from "./pages/doctor-a/Departments";
+import Specialists from "./pages/doctor-a/Specialists";
+import Consultation from "./pages/doctor-a/Consultation";
+import CaseSummary from "./pages/doctor-a/CaseSummary";
 import DoctorAPatients from "./pages/doctor-a/DoctorAPatients";
 import DoctorAHistory from "./pages/doctor-a/DoctorAHistory";
 import DoctorAProfile from "./pages/doctor-a/DoctorAProfile";
@@ -38,6 +42,10 @@ const App = () => (
 
           {/* Doctor A Routes */}
           <Route path="/doctor-a/home" element={<DoctorAHome />} />
+          <Route path="/doctor-a/departments" element={<Departments />} />
+          <Route path="/doctor-a/specialists/:departmentId" element={<Specialists />} />
+          <Route path="/doctor-a/consultation/:doctorId" element={<Consultation />} />
+          <Route path="/doctor-a/case-summary/:doctorId" element={<CaseSummary />} />
           <Route path="/doctor-a/patients" element={<DoctorAPatients />} />
           <Route path="/doctor-a/history" element={<DoctorAHistory />} />
           <Route path="/doctor-a/profile" element={<DoctorAProfile />} />
