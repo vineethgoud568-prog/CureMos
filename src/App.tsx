@@ -28,6 +28,10 @@ import DoctorBProfile from "./pages/doctor-b/DoctorBProfile";
 import Availability from "./pages/doctor-b/Availability";
 import IncomingConsultation from "./pages/doctor-b/IncomingConsultation";
 
+// Call Pages
+import VideoCall from "./pages/calls/VideoCall";
+import VoiceCall from "./pages/calls/VoiceCall";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -59,6 +63,10 @@ const App = () => (
           <Route path="/doctor-b/patients" element={<DoctorBPatients />} />
           <Route path="/doctor-b/doctors" element={<DoctorBDoctors />} />
           <Route path="/doctor-b/profile" element={<DoctorBProfile />} />
+
+          {/* Call Routes */}
+          <Route path="/call/video/:callId" element={<VideoCall />} />
+          <Route path="/call/audio/:callId" element={<VoiceCall />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

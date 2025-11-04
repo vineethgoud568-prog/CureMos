@@ -1,4 +1,4 @@
-import { Bell, Phone, Menu } from "lucide-react";
+import { Phone, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -7,18 +7,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 interface TopAppBarProps {
   title: string;
-  notificationCount?: number;
   showEmergencyContact?: boolean;
   onEmergencyClick?: () => void;
 }
 
 export const TopAppBar = ({
   title,
-  notificationCount = 0,
   showEmergencyContact = true,
   onEmergencyClick,
 }: TopAppBarProps) => {
@@ -64,17 +62,7 @@ export const TopAppBar = ({
             </Button>
           )}
           
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
-            {notificationCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-              >
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </Badge>
-            )}
-          </Button>
+          <NotificationCenter />
         </div>
       </div>
     </header>

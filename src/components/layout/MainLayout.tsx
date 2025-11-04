@@ -6,7 +6,6 @@ interface MainLayoutProps {
   children: ReactNode;
   title: string;
   userType: "doctor-a" | "doctor-b";
-  notificationCount?: number;
   showEmergencyContact?: boolean;
   onEmergencyClick?: () => void;
 }
@@ -15,7 +14,6 @@ export const MainLayout = ({
   children,
   title,
   userType,
-  notificationCount,
   showEmergencyContact,
   onEmergencyClick,
 }: MainLayoutProps) => {
@@ -23,7 +21,6 @@ export const MainLayout = ({
     <div className="min-h-screen flex flex-col bg-background">
       <TopAppBar
         title={title}
-        notificationCount={notificationCount}
         showEmergencyContact={showEmergencyContact}
         onEmergencyClick={onEmergencyClick}
       />
