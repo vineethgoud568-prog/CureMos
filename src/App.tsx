@@ -25,6 +25,8 @@ import DoctorBHome from "./pages/doctor-b/DoctorBHome";
 import DoctorBPatients from "./pages/doctor-b/DoctorBPatients";
 import DoctorBDoctors from "./pages/doctor-b/DoctorBDoctors";
 import DoctorBProfile from "./pages/doctor-b/DoctorBProfile";
+import Availability from "./pages/doctor-b/Availability";
+import IncomingConsultation from "./pages/doctor-b/IncomingConsultation";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,8 @@ const App = () => (
 
           {/* Doctor B Routes */}
           <Route path="/doctor-b/home" element={<DoctorBHome />} />
+          <Route path="/doctor-b/availability" element={<Availability />} />
+          <Route path="/doctor-b/incoming/:requestId" element={<IncomingConsultation />} />
           <Route path="/doctor-b/patients" element={<DoctorBPatients />} />
           <Route path="/doctor-b/doctors" element={<DoctorBDoctors />} />
           <Route path="/doctor-b/profile" element={<DoctorBProfile />} />

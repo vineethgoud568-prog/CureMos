@@ -2,6 +2,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Users, DollarSign, Clock } from "lucide-react";
 import { useState } from "react";
 
@@ -89,12 +90,56 @@ export default function DoctorBHome() {
           <CardHeader>
             <CardTitle>Consultation Requests</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              No pending consultation requests at the moment.
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="space-y-1">
+                <p className="font-semibold">Dr. Sarah Mitchell</p>
+                <p className="text-sm text-muted-foreground">Acute chest pain consultation</p>
+                <p className="text-xs text-warning">High urgency</p>
+              </div>
+              <Button size="sm">Review</Button>
+            </div>
+            <p className="text-sm text-muted-foreground text-center pt-2">
+              + 2 more pending requests
             </p>
           </CardContent>
         </Card>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button variant="outline" className="w-full justify-start" size="sm">
+                <Clock className="w-4 h-4 mr-2" />
+                Manage Availability
+              </Button>
+              <Button variant="outline" className="w-full justify-start" size="sm">
+                <Users className="w-4 h-4 mr-2" />
+                View All Patients
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Recent Consultations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Dr. Robert Chen</span>
+                  <span className="text-muted-foreground">2h ago</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Dr. Lisa Anderson</span>
+                  <span className="text-muted-foreground">5h ago</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </MainLayout>
   );
