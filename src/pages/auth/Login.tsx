@@ -1,20 +1,41 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Stethoscope } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, user, userRole } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (userType: "doctor-a" | "doctor-b") => {
-    // TODO: Implement authentication
-    console.log("Login attempt:", { email, password, userType, rememberMe });
+  useEffect(() => {
+    // Redirect authenticated users to their dashboard
+    if (user && userRole) {
+      const dashboardPath = userRole === "doctor_a" ? "/doctor-a/home" : "/doctor-b/home";
+      navigate(dashboardPath, { replace: true });
+    }
+  }, [user, userRole, navigate]);
+
+  const handleLogin = async (userType: "doctor-a" | "doctor-b") => {
+    setIsLoading(true);
+    try {
+      const { error } = await signIn(email, password);
+      if (!error) {
+        const dashboardPath = userType === "doctor-a" ? "/doctor-a/home" : "/doctor-b/home";
+        navigate(dashboardPath);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -41,6 +62,7 @@ export default function Login() {
                 email={email}
                 password={password}
                 rememberMe={rememberMe}
+                isLoading={isLoading}
                 onEmailChange={setEmail}
                 onPasswordChange={setPassword}
                 onRememberMeChange={setRememberMe}
@@ -53,6 +75,7 @@ export default function Login() {
                 email={email}
                 password={password}
                 rememberMe={rememberMe}
+                isLoading={isLoading}
                 onEmailChange={setEmail}
                 onPasswordChange={setPassword}
                 onRememberMeChange={setRememberMe}
@@ -82,6 +105,7 @@ interface LoginFormProps {
   email: string;
   password: string;
   rememberMe: boolean;
+  isLoading: boolean;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onRememberMeChange: (value: boolean) => void;
@@ -92,6 +116,7 @@ function LoginForm({
   email,
   password,
   rememberMe,
+  isLoading,
   onEmailChange,
   onPasswordChange,
   onRememberMeChange,
@@ -141,8 +166,8 @@ function LoginForm({
         </Label>
       </div>
 
-      <Button type="submit" className="w-full">
-        Sign In
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? <LoadingSpinner size="sm" /> : "Sign In"}
       </Button>
     </form>
   );

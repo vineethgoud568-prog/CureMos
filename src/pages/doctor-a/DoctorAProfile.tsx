@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera } from "lucide-react";
+import { Camera, LogOut } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function DoctorAProfile() {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     fullName: "Dr. John Smith",
     email: "john.smith@example.com",
@@ -25,6 +29,11 @@ export default function DoctorAProfile() {
       title: "Profile Updated",
       description: "Your profile has been saved successfully",
     });
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
   };
 
   return (
@@ -147,7 +156,8 @@ export default function DoctorAProfile() {
             <Button variant="outline" className="w-full">
               Notification Preferences
             </Button>
-            <Button variant="destructive" className="w-full">
+            <Button variant="destructive" className="w-full" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
           </CardContent>
