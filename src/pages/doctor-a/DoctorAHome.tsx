@@ -2,37 +2,41 @@ import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Stethoscope, Users, Clock, AlertCircle, TrendingUp } from "lucide-react";
-
-const recentConsultations = [
-  {
-    id: "1",
-    specialist: "Dr. Sarah Johnson",
-    department: "Cardiology",
-    date: "2025-01-02",
-    status: "completed",
-  },
-  {
-    id: "2",
-    specialist: "Dr. Michael Chen",
-    department: "Neurology",
-    date: "2024-12-28",
-    status: "completed",
-  },
-];
+import { Stethoscope, Users, Clock } from "lucide-react";
+import { useConsultations } from "@/hooks/useConsultations";
+import { usePatients } from "@/hooks/usePatients";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useAuth } from "@/contexts/AuthContext";
+import { format } from "date-fns";
 
 export default function DoctorAHome() {
+  const { user } = useAuth();
+  const { consultations, loading: loadingConsultations } = useConsultations();
+  const { patients, loading: loadingPatients } = usePatients();
+
+  const activeCases = consultations.filter((c) => c.status === "active" || c.status === "pending").length;
+  const pendingReferrals = patients.filter((p) => p.referral?.status === "pending").length;
+  const recentConsultations = consultations.slice(0, 5);
+
+  if (loadingConsultations || loadingPatients) {
+    return (
+      <MainLayout title="Dashboard" userType="doctor-a">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner size="lg" />
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
-    <MainLayout
-      title="Dashboard"
-      userType="doctor-a"
-      showEmergencyContact
-    >
+    <MainLayout title="Dashboard" userType="doctor-a" showEmergencyContact>
       <div className="container max-w-4xl mx-auto p-4 space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Welcome, Dr. Smith</h2>
+          <h2 className="text-2xl font-bold">
+            Welcome, {user?.email?.split('@')[0]}
+          </h2>
           <p className="text-muted-foreground">Your consultation dashboard</p>
         </div>
 
@@ -46,12 +50,8 @@ export default function DoctorAHome() {
             <CardContent>
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-primary" />
-                <span className="text-2xl font-bold">12</span>
+                <span className="text-2xl font-bold">{activeCases}</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                <TrendingUp className="w-3 h-3 inline mr-1" />
-                +2 this week
-              </p>
             </CardContent>
           </Card>
 
@@ -64,7 +64,7 @@ export default function DoctorAHome() {
             <CardContent>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-warning" />
-                <span className="text-2xl font-bold">5</span>
+                <span className="text-2xl font-bold">{pendingReferrals}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Awaiting admission</p>
             </CardContent>
@@ -94,21 +94,21 @@ export default function DoctorAHome() {
               recentConsultations.map((consultation) => (
                 <div key={consultation.id} className="flex items-center gap-3">
                   <Avatar className="w-10 h-10">
+                    <AvatarImage src={consultation.doctor_b_profile?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                      {consultation.specialist
-                        .split(" ")
-                        .map((n) => n[1])
-                        .join("")}
+                      {consultation.doctor_b_profile?.full_name?.split(" ").map(n => n[0]).join("") || "?"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{consultation.specialist}</p>
-                    <p className="text-xs text-muted-foreground">{consultation.department}</p>
+                    <p className="text-sm font-medium">{consultation.doctor_b_profile?.full_name || "Specialist"}</p>
+                    <p className="text-xs text-muted-foreground">{consultation.doctor_b_profile?.specialization || "Specialist"}</p>
                   </div>
                   <div className="text-right">
-                    <Badge variant="secondary">Completed</Badge>
+                    <Badge variant={consultation.status === "completed" ? "default" : "secondary"}>
+                      {consultation.status}
+                    </Badge>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(consultation.date).toLocaleDateString()}
+                      {format(new Date(consultation.start_time), "MMM dd")}
                     </p>
                   </div>
                 </div>

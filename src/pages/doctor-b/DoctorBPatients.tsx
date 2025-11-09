@@ -1,71 +1,64 @@
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Search, UserCheck, Clock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, UserCheck, Clock, Calendar } from "lucide-react";
 import { useState } from "react";
+import { usePatients } from "@/hooks/usePatients";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { format } from "date-fns";
 
 export default function DoctorBPatients() {
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Mock data - will be replaced with actual data from Supabase
-  const referredPatients = [
-    {
-      id: "1",
-      name: "John Smith",
-      age: 45,
-      gender: "Male",
-      referredBy: "Dr. Sarah Mitchell",
-      referralDate: "2025-01-02",
-      status: "admitted",
-      condition: "Acute chest pain, suspected MI",
-      admissionDate: "2025-01-03",
-    },
-    {
-      id: "2",
-      name: "Emily Johnson",
-      age: 32,
-      gender: "Female",
-      referredBy: "Dr. Robert Chen",
-      referralDate: "2025-01-03",
-      status: "pending",
-      condition: "Severe migraine, neurological assessment needed",
-    },
-    {
-      id: "3",
-      name: "Michael Brown",
-      age: 58,
-      gender: "Male",
-      referredBy: "Dr. Lisa Anderson",
-      referralDate: "2024-12-28",
-      status: "discharged",
-      condition: "Post-operative follow-up",
-      dischargeDate: "2025-01-01",
-    },
-  ];
+  const { patients, loading } = usePatients();
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "admitted":
-        return "default";
       case "pending":
         return "secondary";
-      case "discharged":
+      case "accepted":
+        return "default";
+      case "admitted":
+        return "default";
+      case "completed":
         return "outline";
       default:
         return "outline";
     }
   };
 
-  const filteredPatients = referredPatients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    patient.condition.toLowerCase().includes(searchQuery.toLowerCase())
+  const getAge = (dateOfBirth: string | null) => {
+    if (!dateOfBirth) return null;
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const filteredPatients = patients.filter((patient) =>
+    patient.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    patient.medical_history?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const pendingCount = referredPatients.filter(p => p.status === "pending").length;
-  const admittedCount = referredPatients.filter(p => p.status === "admitted").length;
+  const pendingCount = patients.filter(p => p.referral?.status === "pending").length;
+  const admittedCount = patients.filter(p => p.referral?.status === "admitted").length;
+
+  if (loading) {
+    return (
+      <MainLayout title="My Patients" userType="doctor-b">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner size="lg" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout title="My Patients" userType="doctor-b">
@@ -119,137 +112,141 @@ export default function DoctorBPatients() {
             <TabsTrigger value="admitted">Admitted ({admittedCount})</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="all" className="space-y-4">
-            {filteredPatients.map((patient) => (
-              <Card key={patient.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{patient.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {patient.age} years • {patient.gender}
-                      </p>
-                    </div>
-                    <Badge variant={getStatusColor(patient.status)}>
-                      {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold">Condition</p>
-                    <p className="text-sm text-muted-foreground">{patient.condition}</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <UserCheck className="w-4 h-4 text-muted-foreground" />
-                      <span>Referred by {patient.referredBy}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span>{patient.referralDate}</span>
-                    </div>
-                  </div>
-                  {patient.status === "admitted" && patient.admissionDate && (
-                    <p className="text-sm text-muted-foreground">
-                      Admitted on {patient.admissionDate}
-                    </p>
-                  )}
-                  {patient.status === "discharged" && patient.dischargeDate && (
-                    <p className="text-sm text-muted-foreground">
-                      Discharged on {patient.dischargeDate}
-                    </p>
-                  )}
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline">View Details</Button>
-                    {patient.status === "pending" && (
-                      <Button size="sm" variant="default">Accept Admission</Button>
-                    )}
-                    {patient.status === "admitted" && (
-                      <Button size="sm" variant="outline">Update Status</Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
+          <TabsContent value="all" className="space-y-4 mt-4">
+            {filteredPatients.map((patient) => {
+              const age = getAge(patient.date_of_birth);
+              return (
+                <Card key={patient.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {patient.full_name.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
 
-          <TabsContent value="pending" className="space-y-4">
-            {filteredPatients.filter(p => p.status === "pending").map((patient) => (
-              <Card key={patient.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{patient.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {patient.age} years • {patient.gender}
-                      </p>
-                    </div>
-                    <Badge variant="secondary">Pending</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold">Condition</p>
-                    <p className="text-sm text-muted-foreground">{patient.condition}</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <UserCheck className="w-4 h-4 text-muted-foreground" />
-                      <span>Referred by {patient.referredBy}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span>{patient.referralDate}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline">View Details</Button>
-                    <Button size="sm" variant="default">Accept Admission</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold">{patient.full_name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {age ? `${age} years` : "Age not specified"}
+                              {patient.gender && ` • ${patient.gender}`}
+                            </p>
+                            {patient.medical_history && (
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                                History: {patient.medical_history}
+                              </p>
+                            )}
+                          </div>
+                          {patient.referral && (
+                            <Badge variant={getStatusColor(patient.referral.status)}>
+                              {patient.referral.status}
+                            </Badge>
+                          )}
+                        </div>
 
-          <TabsContent value="admitted" className="space-y-4">
-            {filteredPatients.filter(p => p.status === "admitted").map((patient) => (
-              <Card key={patient.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{patient.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {patient.age} years • {patient.gender}
-                      </p>
-                    </div>
-                    <Badge>Admitted</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold">Condition</p>
-                    <p className="text-sm text-muted-foreground">{patient.condition}</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <UserCheck className="w-4 h-4 text-muted-foreground" />
-                      <span>Referred by {patient.referredBy}</span>
-                    </div>
-                    {patient.admissionDate && (
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span>Admitted {patient.admissionDate}</span>
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          {patient.referral && (
+                            <>
+                              <div>
+                                Referral Date: {format(new Date(patient.referral.referral_date), "MMM dd, yyyy")}
+                              </div>
+                              {patient.referral.admission_date && (
+                                <div>
+                                  Admission: {format(new Date(patient.referral.admission_date), "MMM dd, yyyy")}
+                                </div>
+                              )}
+                              {patient.referral.diagnosis && (
+                                <div>Diagnosis: {patient.referral.diagnosis}</div>
+                              )}
+                            </>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                          <Button variant="outline" size="sm" className="flex-1">
+                            View Records
+                          </Button>
+                          {patient.referral?.status === "pending" && (
+                            <Button variant="default" size="sm" className="flex-1">
+                              Accept Referral
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline">View Details</Button>
-                    <Button size="sm" variant="outline">Update Status</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </TabsContent>
+
+          <TabsContent value="pending" className="space-y-4 mt-4">
+            {filteredPatients.filter(p => p.referral?.status === "pending").map((patient) => {
+              const age = getAge(patient.date_of_birth);
+              return (
+                <Card key={patient.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {patient.full_name.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <div>
+                          <h3 className="font-semibold">{patient.full_name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {age ? `${age} years` : "Age not specified"}
+                            {patient.gender && ` • ${patient.gender}`}
+                          </p>
+                        </div>
+                        <Button variant="default" size="sm" className="w-full">
+                          Accept Referral
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </TabsContent>
+
+          <TabsContent value="admitted" className="space-y-4 mt-4">
+            {filteredPatients.filter(p => p.referral?.status === "admitted").map((patient) => {
+              const age = getAge(patient.date_of_birth);
+              return (
+                <Card key={patient.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {patient.full_name.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <div>
+                          <h3 className="font-semibold">{patient.full_name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {age ? `${age} years` : "Age not specified"}
+                            {patient.gender && ` • ${patient.gender}`}
+                          </p>
+                          {patient.referral?.admission_date && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Admitted: {format(new Date(patient.referral.admission_date), "MMM dd, yyyy")}
+                            </p>
+                          )}
+                        </div>
+                        <Button variant="default" size="sm" className="w-full">
+                          Discharge
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </TabsContent>
         </Tabs>
       </div>

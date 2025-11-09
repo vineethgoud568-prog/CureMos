@@ -3,8 +3,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Search, Calendar, Clock, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -12,59 +12,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const mockConsultations = [
-  {
-    id: "1",
-    specialist: "Dr. Sarah Johnson",
-    department: "Cardiology",
-    date: "2025-01-02",
-    duration: "25 min",
-    outcome: "closed",
-    patientName: "John Doe",
-  },
-  {
-    id: "2",
-    specialist: "Dr. Michael Chen",
-    department: "Neurology",
-    date: "2024-12-28",
-    duration: "30 min",
-    outcome: "referred",
-    patientName: "Jane Smith",
-  },
-  {
-    id: "3",
-    specialist: "Dr. Emily Rodriguez",
-    department: "Orthopedics",
-    date: "2024-12-20",
-    duration: "20 min",
-    outcome: "closed",
-    patientName: "Robert Johnson",
-  },
-];
+import { useConsultations } from "@/hooks/useConsultations";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { format } from "date-fns";
 
 export default function DoctorAHistory() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterDepartment, setFilterDepartment] = useState("all");
-  const [filterOutcome, setFilterOutcome] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const { consultations, loading } = useConsultations();
 
-  const filteredConsultations = mockConsultations.filter((consultation) => {
+  const filteredConsultations = consultations.filter((consultation) => {
     const matchesSearch =
-      consultation.specialist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      consultation.patientName?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDepartment =
-      filterDepartment === "all" || consultation.department === filterDepartment;
-    const matchesOutcome = filterOutcome === "all" || consultation.outcome === filterOutcome;
-    return matchesSearch && matchesDepartment && matchesOutcome;
+      consultation.doctor_b_profile?.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      consultation.patient?.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      filterStatus === "all" || consultation.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
   });
 
-  const getOutcomeBadge = (outcome: string) => {
-    return outcome === "referred" ? (
-      <Badge variant="default">Referred</Badge>
-    ) : (
-      <Badge variant="secondary">Closed</Badge>
-    );
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "secondary" | "outline"> = {
+      completed: "default",
+      active: "secondary",
+      pending: "outline",
+    };
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
   };
+
+  if (loading) {
+    return (
+      <MainLayout title="Consultation History" userType="doctor-a">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner size="lg" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout title="Consultation History" userType="doctor-a">
@@ -81,27 +65,16 @@ export default function DoctorAHistory() {
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Department" />
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                <SelectItem value="Cardiology">Cardiology</SelectItem>
-                <SelectItem value="Neurology">Neurology</SelectItem>
-                <SelectItem value="Orthopedics">Orthopedics</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={filterOutcome} onValueChange={setFilterOutcome}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Outcome" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Outcomes</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-                <SelectItem value="referred">Referred</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -111,40 +84,34 @@ export default function DoctorAHistory() {
           {filteredConsultations.map((consultation) => (
             <Card key={consultation.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4">
                   <Avatar className="w-12 h-12">
+                    <AvatarImage src={consultation.doctor_b_profile?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      {consultation.specialist
-                        .split(" ")
-                        .map((n) => n[1])
-                        .join("")}
+                      {consultation.doctor_b_profile?.full_name?.split(" ").map(n => n[0]).join("") || "?"}
                     </AvatarFallback>
                   </Avatar>
 
-                  <div className="flex-1 space-y-2">
+                  <div className="flex-1 space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold">{consultation.specialist}</h3>
-                        <p className="text-sm text-muted-foreground">{consultation.department}</p>
+                        <h3 className="font-semibold">{consultation.doctor_b_profile?.full_name || "Specialist"}</h3>
+                        <p className="text-sm text-muted-foreground">{consultation.doctor_b_profile?.specialization || "Specialist"}</p>
+                        {consultation.patient?.full_name && (
+                          <p className="text-sm text-muted-foreground">Patient: {consultation.patient.full_name}</p>
+                        )}
                       </div>
-                      {getOutcomeBadge(consultation.outcome)}
+                      <div className="text-right space-y-1">
+                        {getStatusBadge(consultation.status)}
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {format(new Date(consultation.start_time), "MMM dd, yyyy")}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(consultation.date).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {consultation.duration}
-                      </div>
-                      {consultation.patientName && (
-                        <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          {consultation.patientName}
-                        </div>
-                      )}
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Type: {consultation.consultation_type}</p>
+                      <p className="text-muted-foreground">Urgency: {consultation.urgency_level}</p>
                     </div>
                   </div>
                 </div>
