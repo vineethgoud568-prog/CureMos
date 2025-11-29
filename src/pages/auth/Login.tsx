@@ -45,7 +45,7 @@ export default function Login() {
           <div className="mx-auto bg-primary rounded-full p-3 w-fit">
             <Stethoscope className="w-8 h-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Welcome to DocTalk</CardTitle>
+          <CardTitle className="text-2xl">Welcome to CureMos</CardTitle>
           <CardDescription>
             Connect with medical professionals for seamless consultations
           </CardDescription>
