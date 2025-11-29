@@ -53,8 +53,8 @@ export default function Login() {
         <CardContent>
           <Tabs defaultValue="doctor-a" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="doctor-a">General Practitioner</TabsTrigger>
-              <TabsTrigger value="doctor-b">Specialist</TabsTrigger>
+              <TabsTrigger value="doctor-a">Doctor</TabsTrigger>
+              <TabsTrigger value="doctor-b">CureMos Doctor</TabsTrigger>
             </TabsList>
 
             <TabsContent value="doctor-a" className="space-y-4">
