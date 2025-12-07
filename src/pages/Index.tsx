@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Stethoscope, Users, Video, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import CuremosLogo from "@/assets/curemoslogo.png"; // <-- add this line
 
 const Index = () => {
   const { user, userRole, loading } = useAuth();
@@ -25,8 +26,12 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center space-y-6 mb-16">
-          <div className="mx-auto bg-primary rounded-full p-4 w-fit">
-            <Stethoscope className="w-12 h-12 text-primary-foreground" />
+          <div className="mx-auto rounded-full p-4 w-fit">
+            <img
+              src={CuremosLogo}
+              alt="Curemos logo"
+              className="h-24 w-auto mx-auto"
+            />
           </div>
           <h1 className="text-5xl font-bold text-balance">Welcome to CureMos</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

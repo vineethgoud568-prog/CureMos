@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Stethoscope } from "lucide-react";
+import CuremosLogo from "@/assets/curemoslogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -17,6 +17,9 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const { signUp, user, userRole } = useAuth();
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [medicalLicenseNumber, setMedicalLicenseNumber] = useState("");
+  const [placeOfWork, setPlaceOfWork] = useState("");
 
   useEffect(() => {
     // Redirect authenticated users to their dashboard
@@ -50,50 +53,66 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto bg-primary rounded-full p-3 w-fit">
-            <Stethoscope className="w-8 h-8 text-primary-foreground" />
+          <div className="mx-auto p-3 w-fit">
+           <img
+              src={CuremosLogo}
+              alt="Curemos logo"
+              className="h-24 w-auto mx-auto"
+            />
           </div>
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>
-            Join DocTalk to connect with medical professionals
+            Join CureMos to connect with medical professionals
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="doctor-a" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="doctor-a">General Practitioner</TabsTrigger>
-              <TabsTrigger value="doctor-b">Specialist</TabsTrigger>
+              <TabsTrigger value="doctor-a">Doctor</TabsTrigger>
+              <TabsTrigger value="doctor-b">CureMos Doctor</TabsTrigger>
             </TabsList>
 
             <TabsContent value="doctor-a" className="space-y-4">
-              <RegisterForm
-                email={email}
-                password={password}
-                fullName={fullName}
-                confirmPassword={confirmPassword}
-                isLoading={isLoading}
-                onEmailChange={setEmail}
-                onPasswordChange={setPassword}
-                onFullNameChange={setFullName}
-                onConfirmPasswordChange={setConfirmPassword}
-                onSubmit={() => handleRegister("doctor_a")}
-              />
-            </TabsContent>
+  <RegisterForm
+    email={email}
+    password={password}
+    fullName={fullName}
+    confirmPassword={confirmPassword}
+    phoneNumber={phoneNumber}
+    medicalLicenseNumber={medicalLicenseNumber}
+    placeOfWork={placeOfWork}
+    isLoading={isLoading}
+    onEmailChange={setEmail}
+    onPasswordChange={setPassword}
+    onFullNameChange={setFullName}
+    onConfirmPasswordChange={setConfirmPassword}
+    onPhoneNumberChange={setPhoneNumber}
+    onMedicalLicenseNumberChange={setMedicalLicenseNumber}
+    onPlaceOfWorkChange={setPlaceOfWork}
+    onSubmit={() => handleRegister("doctor_a")}
+  />
+</TabsContent>
 
-            <TabsContent value="doctor-b" className="space-y-4">
-              <RegisterForm
-                email={email}
-                password={password}
-                fullName={fullName}
-                confirmPassword={confirmPassword}
-                isLoading={isLoading}
-                onEmailChange={setEmail}
-                onPasswordChange={setPassword}
-                onFullNameChange={setFullName}
-                onConfirmPasswordChange={setConfirmPassword}
-                onSubmit={() => handleRegister("doctor_b")}
-              />
-            </TabsContent>
+<TabsContent value="doctor-b" className="space-y-4">
+  <RegisterForm
+    email={email}
+    password={password}
+    fullName={fullName}
+    confirmPassword={confirmPassword}
+    phoneNumber={phoneNumber}
+    medicalLicenseNumber={medicalLicenseNumber}
+    placeOfWork={placeOfWork}
+    isLoading={isLoading}
+    onEmailChange={setEmail}
+    onPasswordChange={setPassword}
+    onFullNameChange={setFullName}
+    onConfirmPasswordChange={setConfirmPassword}
+    onPhoneNumberChange={setPhoneNumber}
+    onMedicalLicenseNumberChange={setMedicalLicenseNumber}
+    onPlaceOfWorkChange={setPlaceOfWork}
+    onSubmit={() => handleRegister("doctor_b")}
+  />
+</TabsContent>
           </Tabs>
 
           <div className="mt-6 text-center">
@@ -115,24 +134,37 @@ interface RegisterFormProps {
   password: string;
   fullName: string;
   confirmPassword: string;
+  phoneNumber: string;
+  medicalLicenseNumber: string;
+  placeOfWork: string;
   isLoading: boolean;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onFullNameChange: (value: string) => void;
   onConfirmPasswordChange: (value: string) => void;
+  onPhoneNumberChange: (value: string) => void;
+  onMedicalLicenseNumberChange: (value: string) => void;
+  onPlaceOfWorkChange: (value: string) => void;
   onSubmit: () => void;
 }
 
+
 function RegisterForm({
-  email,
+email,
   password,
   fullName,
   confirmPassword,
+  phoneNumber,
+  medicalLicenseNumber,
+  placeOfWork,
   isLoading,
   onEmailChange,
   onPasswordChange,
   onFullNameChange,
   onConfirmPasswordChange,
+  onPhoneNumberChange,
+  onMedicalLicenseNumberChange,
+  onPlaceOfWorkChange,
   onSubmit,
 }: RegisterFormProps) {
   return (
@@ -192,10 +224,46 @@ function RegisterForm({
           required
         />
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="phoneNumber">Phone Number</Label>
+        <Input
+          id="phoneNumber"
+          type="tel"
+          placeholder="+91 98765 43210"
+          value={phoneNumber}
+          onChange={(e) => onPhoneNumberChange(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="medicalLicenseNumber">Medical License Number</Label>
+        <Input
+          id="medicalLicenseNumber"
+          type="text"
+          placeholder="MCI / State Reg. No."
+          value={medicalLicenseNumber}
+          onChange={(e) => onMedicalLicenseNumberChange(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="placeOfWork">Place of Work</Label>
+        <Input
+          id="placeOfWork"
+          type="text"
+          placeholder="Hospital / Clinic name"
+          value={placeOfWork}
+          onChange={(e) => onPlaceOfWorkChange(e.target.value)}
+          required
+        />
+      </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? <LoadingSpinner size="sm" /> : "Create Account"}
       </Button>
     </form>
+    
   );
 }

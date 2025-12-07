@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Stethoscope } from "lucide-react";
+//import { Stethoscope } from "lucide-react";
+import CuremosLogo from "@/assets/curemoslogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -42,8 +43,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto bg-primary rounded-full p-3 w-fit">
-            <Stethoscope className="w-8 h-8 text-primary-foreground" />
+          <div className="mx-auto p-3 w-fit">
+           <img
+              src={CuremosLogo}
+              alt="Curemos logo"
+              className="h-24 w-auto mx-auto"
+            />
           </div>
           <CardTitle className="text-2xl">Welcome to CureMos</CardTitle>
           <CardDescription>
