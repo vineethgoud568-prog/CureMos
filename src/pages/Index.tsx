@@ -28,7 +28,7 @@ const Index = () => {
           <div className="mx-auto bg-primary rounded-full p-4 w-fit">
             <Stethoscope className="w-12 h-12 text-primary-foreground" />
           </div>
-          <h1 className="text-5xl font-bold text-balance">Welcome to DocTalk</h1>
+          <h1 className="text-5xl font-bold text-balance">Welcome to CureMos</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Bridging the gap between general practitioners and specialist doctors through seamless digital communication
           </p>
