@@ -58,7 +58,7 @@ export default function Register() {
            <img
               src={CuremosLogo}
               alt="Curemos logo"
-              className="h-24 w-auto mx-auto"
+              className="h-32 w-auto mx-auto"
             />
           </div>
           <CardTitle className="text-2xl">Create Account</CardTitle>
@@ -75,46 +75,44 @@ export default function Register() {
 
             <TabsContent value="doctor-a" className="space-y-4">
   <RegisterForm
-    email={email}
-    password={password}
-    fullName={fullName}
-    confirmPassword={confirmPassword}
-    phoneNumber={phoneNumber}
-    medicalLicenseNumber={medicalLicenseNumber}
-    placeOfWork={placeOfWork}
-    isLoading={isLoading}
-    onEmailChange={setEmail}
-    onPasswordChange={setPassword}
-    onFullNameChange={setFullName}
-    onConfirmPasswordChange={setConfirmPassword}
-    onPhoneNumberChange={setPhoneNumber}
-    onMedicalLicenseNumberChange={setMedicalLicenseNumber}
-    onPlaceOfWorkChange={setPlaceOfWork}
-    onLocationChange={setLocation}
-    onSubmit={() => handleRegister("doctor_a")}
-  />
+                email={email}
+                password={password}
+                fullName={fullName}
+                confirmPassword={confirmPassword}
+                phoneNumber={phoneNumber}
+                medicalLicenseNumber={medicalLicenseNumber}
+                placeOfWork={placeOfWork}
+                isLoading={isLoading}
+                onEmailChange={setEmail}
+                onPasswordChange={setPassword}
+                onFullNameChange={setFullName}
+                onConfirmPasswordChange={setConfirmPassword}
+                onPhoneNumberChange={setPhoneNumber}
+                onMedicalLicenseNumberChange={setMedicalLicenseNumber}
+                onPlaceOfWorkChange={setPlaceOfWork}
+                onLocationChange={setLocation}
+                onSubmit={() => handleRegister("doctor_a")} location={""}  />
 </TabsContent>
 
 <TabsContent value="doctor-b" className="space-y-4">
   <RegisterForm
-    email={email}
-    password={password}
-    fullName={fullName}
-    confirmPassword={confirmPassword}
-    phoneNumber={phoneNumber}
-    medicalLicenseNumber={medicalLicenseNumber}
-    placeOfWork={placeOfWork}
-    isLoading={isLoading}
-    onEmailChange={setEmail}
-    onPasswordChange={setPassword}
-    onFullNameChange={setFullName}
-    onConfirmPasswordChange={setConfirmPassword}
-    onPhoneNumberChange={setPhoneNumber}
-    onMedicalLicenseNumberChange={setMedicalLicenseNumber}
-    onPlaceOfWorkChange={setPlaceOfWork}
-    onLocationChange={setLocation}
-    onSubmit={() => handleRegister("doctor_b")}
-  />
+                email={email}
+                password={password}
+                fullName={fullName}
+                confirmPassword={confirmPassword}
+                phoneNumber={phoneNumber}
+                medicalLicenseNumber={medicalLicenseNumber}
+                placeOfWork={placeOfWork}
+                isLoading={isLoading}
+                onEmailChange={setEmail}
+                onPasswordChange={setPassword}
+                onFullNameChange={setFullName}
+                onConfirmPasswordChange={setConfirmPassword}
+                onPhoneNumberChange={setPhoneNumber}
+                onMedicalLicenseNumberChange={setMedicalLicenseNumber}
+                onPlaceOfWorkChange={setPlaceOfWork}
+                onLocationChange={setLocation}
+                onSubmit={() => handleRegister("doctor_b")} location={""}  />
 </TabsContent>
           </Tabs>
 

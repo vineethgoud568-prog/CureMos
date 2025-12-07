@@ -47,7 +47,7 @@ export default function Login() {
            <img
               src={CuremosLogo}
               alt="Curemos logo"
-              className="h-32 w-auto mx-auto"
+              className="h-24 w-auto mx-auto"
             />
           </div>
           <CardTitle className="text-2xl">Welcome to CureMos</CardTitle>
