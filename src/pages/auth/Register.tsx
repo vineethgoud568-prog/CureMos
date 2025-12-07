@@ -20,6 +20,7 @@ export default function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [medicalLicenseNumber, setMedicalLicenseNumber] = useState("");
   const [placeOfWork, setPlaceOfWork] = useState("");
+  const [location, setLocation] = useState("");
 
   useEffect(() => {
     // Redirect authenticated users to their dashboard
@@ -89,6 +90,7 @@ export default function Register() {
     onPhoneNumberChange={setPhoneNumber}
     onMedicalLicenseNumberChange={setMedicalLicenseNumber}
     onPlaceOfWorkChange={setPlaceOfWork}
+    onLocationChange={setLocation}
     onSubmit={() => handleRegister("doctor_a")}
   />
 </TabsContent>
@@ -110,6 +112,7 @@ export default function Register() {
     onPhoneNumberChange={setPhoneNumber}
     onMedicalLicenseNumberChange={setMedicalLicenseNumber}
     onPlaceOfWorkChange={setPlaceOfWork}
+    onLocationChange={setLocation}
     onSubmit={() => handleRegister("doctor_b")}
   />
 </TabsContent>
@@ -137,6 +140,7 @@ interface RegisterFormProps {
   phoneNumber: string;
   medicalLicenseNumber: string;
   placeOfWork: string;
+  location: string;
   isLoading: boolean;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
@@ -145,6 +149,7 @@ interface RegisterFormProps {
   onPhoneNumberChange: (value: string) => void;
   onMedicalLicenseNumberChange: (value: string) => void;
   onPlaceOfWorkChange: (value: string) => void;
+  onLocationChange: (value: string) => void;
   onSubmit: () => void;
 }
 
@@ -157,6 +162,7 @@ email,
   phoneNumber,
   medicalLicenseNumber,
   placeOfWork,
+  location,
   isLoading,
   onEmailChange,
   onPasswordChange,
@@ -165,6 +171,7 @@ email,
   onPhoneNumberChange,
   onMedicalLicenseNumberChange,
   onPlaceOfWorkChange,
+  onLocationChange,
   onSubmit,
 }: RegisterFormProps) {
   return (
@@ -259,6 +266,17 @@ email,
           required
         />
       </div>
+      <div className="space-y-2">
+  <Label htmlFor="location">Location</Label>
+  <Input
+    id="location"
+    type="text"
+    placeholder="City, Country"
+    value={location}
+    onChange={(e) => onLocationChange(e.target.value)}
+    required
+  />
+</div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? <LoadingSpinner size="sm" /> : "Create Account"}
