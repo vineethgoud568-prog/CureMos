@@ -30,7 +30,7 @@ const Index = () => {
             <img
               src={CuremosLogo}
               alt="Curemos logo"
-              className="h-24 w-auto mx-auto"
+              className="h-32 w-auto mx-auto"
             />
           </div>
           <h1 className="text-5xl font-bold text-balance">Welcome to CureMos</h1>
