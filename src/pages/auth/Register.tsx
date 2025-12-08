@@ -58,7 +58,7 @@ export default function Register() {
            <img
               src={CuremosLogo}
               alt="Curemos logo"
-              className="h-32 w-auto mx-auto"
+              className="h-36 w-auto mx-auto"
             />
           </div>
           <CardTitle className="text-2xl">Create Account</CardTitle>
