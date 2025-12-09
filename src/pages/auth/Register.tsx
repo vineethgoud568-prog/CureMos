@@ -83,6 +83,7 @@ export default function Register() {
                 medicalLicenseNumber={medicalLicenseNumber}
                 placeOfWork={placeOfWork}
                 isLoading={isLoading}
+                //location={location}
                 onEmailChange={setEmail}
                 onPasswordChange={setPassword}
                 onFullNameChange={setFullName}
@@ -91,7 +92,8 @@ export default function Register() {
                 onMedicalLicenseNumberChange={setMedicalLicenseNumber}
                 onPlaceOfWorkChange={setPlaceOfWork}
                 onLocationChange={setLocation}
-                onSubmit={() => handleRegister("doctor_a")} location={""}  />
+                onSubmit={() => handleRegister("doctor_a")} 
+                location={location}  />
 </TabsContent>
 
 <TabsContent value="doctor-b" className="space-y-4">
@@ -104,6 +106,7 @@ export default function Register() {
                 medicalLicenseNumber={medicalLicenseNumber}
                 placeOfWork={placeOfWork}
                 isLoading={isLoading}
+                //location = {location}
                 onEmailChange={setEmail}
                 onPasswordChange={setPassword}
                 onFullNameChange={setFullName}
@@ -112,7 +115,8 @@ export default function Register() {
                 onMedicalLicenseNumberChange={setMedicalLicenseNumber}
                 onPlaceOfWorkChange={setPlaceOfWork}
                 onLocationChange={setLocation}
-                onSubmit={() => handleRegister("doctor_b")} location={""}  />
+                onSubmit={() => handleRegister("doctor_b")} 
+                location={location}  />
 </TabsContent>
           </Tabs>
 
